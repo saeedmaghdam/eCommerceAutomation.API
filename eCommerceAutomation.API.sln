@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.810.6
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eCommerceAutomation.API", "src\eCommerceAutomation.API\eCommerceAutomation.API.csproj", "{688D6A63-D085-4F6B-8863-BAA47B06ACA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eCommerceAutomation.API", "src\eCommerceAutomation.API\eCommerceAutomation.API.csproj", "{688D6A63-D085-4F6B-8863-BAA47B06ACA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eCommerceAutomation.API.Domain", "src\eCommerceAutomation.API.Domain\eCommerceAutomation.API.Domain.csproj", "{743072C2-4C7E-4EB5-B119-8ADC724758EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eCommerceAutomation.API.Domain", "src\eCommerceAutomation.API.Domain\eCommerceAutomation.API.Domain.csproj", "{743072C2-4C7E-4EB5-B119-8ADC724758EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eCommerceAutomation.API.Framework", "src\eCommerceAutomation.API.Framework\eCommerceAutomation.API.Framework.csproj", "{EF91F29D-7E07-4EB4-B862-ADBF6605312C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eCommerceAutomation.API.Framework", "src\eCommerceAutomation.API.Framework\eCommerceAutomation.API.Framework.csproj", "{EF91F29D-7E07-4EB4-B862-ADBF6605312C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eCommerceAutomation.API.Service", "src\eCommerceAutomation.API.Service\eCommerceAutomation.API.Service.csproj", "{E78CF6C4-EC49-4294-8741-49B64F64C6BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{EF91F29D-7E07-4EB4-B862-ADBF6605312C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF91F29D-7E07-4EB4-B862-ADBF6605312C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF91F29D-7E07-4EB4-B862-ADBF6605312C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E78CF6C4-EC49-4294-8741-49B64F64C6BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E78CF6C4-EC49-4294-8741-49B64F64C6BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E78CF6C4-EC49-4294-8741-49B64F64C6BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E78CF6C4-EC49-4294-8741-49B64F64C6BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eCommerceAutomation.API.Framework\eCommerceAutomation.API.Framework.csproj" />
+    <ProjectReference Include="..\eCommerceAutomation.API.Domain\eCommerceAutomation.API.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Product\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Product\" />
+  </ItemGroup>
+</Project>

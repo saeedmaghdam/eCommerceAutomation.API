@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using eCommerceAutomation.API.Framework;
+using eCommerceAutomation.API.Framework.Services.Product;
+using eCommerceAutomation.API.Service.Product;
 
 namespace eCommerceAutomation.API
 {
@@ -21,6 +23,8 @@ namespace eCommerceAutomation.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IProductService, ProductService>();
+
             services.AddControllers();
             services.AddHealthChecks();
             // Register the Swagger generator, defining 1 or more Swagger documents
@@ -48,7 +52,7 @@ namespace eCommerceAutomation.API
 
             services.AddEntityFrameworkNpgsql().AddDbContext<Domain.AppDbContext>((sp, options) =>
             {
-                options.UseNpgsql(Configuration.GetConnectionString("DashFireDatabase"));
+                options.UseNpgsql(Configuration.GetConnectionString("Database"));
                 options.UseInternalServiceProvider(sp);
             }, ServiceLifetime.Scoped);
         }
