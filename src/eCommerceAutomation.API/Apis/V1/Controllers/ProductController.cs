@@ -74,5 +74,13 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
 
             return Ok();
         }
+
+        [HttpPatch("source/{sourceId}/status")]
+        public async Task<ActionResult> PatchSourceStatusAsync([FromRoute] long sourceId, [FromBody] bool isDisabled, CancellationToken cancellationToken)
+        {
+            await _productService.PatchSourceStatusAsync(sourceId, isDisabled, cancellationToken);
+
+            return Ok();
+        }
     }
 }

@@ -69,6 +69,13 @@ namespace eCommerceAutomation.API.Domain
             set;
         }
 
+        [Column("is_disabled")]
+        public bool IsDisabled
+        {
+            get;
+            set;
+        }
+
         public static Source Create()
         {
             var source = new Source();

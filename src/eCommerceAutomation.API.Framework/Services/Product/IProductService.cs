@@ -15,5 +15,7 @@ namespace eCommerceAutomation.API.Framework.Services.Product
         Task PatchStatusAsync(long id, bool isDisabled, CancellationToken cancellationToken);
 
         Task PatchReviewNeededStatusAsync(long id, bool isReviewNeeded, CancellationToken cancellationToken);
+
+        Task PatchSourceStatusAsync(long sourceId, bool isDisabled, CancellationToken cancellationToken);
     }
 }

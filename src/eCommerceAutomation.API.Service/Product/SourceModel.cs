@@ -46,5 +46,11 @@ namespace eCommerceAutomation.API.Service.Product
             get;
             set;
         }
+
+        public bool IsDisabled
+        {
+            get;
+            set;
+        }
     }
 }

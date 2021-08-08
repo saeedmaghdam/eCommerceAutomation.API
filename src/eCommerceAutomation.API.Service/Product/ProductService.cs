@@ -62,7 +62,8 @@ namespace eCommerceAutomation.API.Service.Product
                 RecordUpdateDateTime = DateTime.Now,
                 SourceType = source.SourceType,
                 ViewId = Guid.NewGuid(),
-                WholesalePriceAdjustment = source.WholesalePriceAdjustment
+                WholesalePriceAdjustment = source.WholesalePriceAdjustment,
+                IsDisabled = false
             }).ToList();
             _db.Products.Add(newProduct);
 
@@ -148,7 +149,7 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task PatchStatusAsync(long id, bool isDisabled, CancellationToken cancellationToken)
         {
-            var product = await _db.Products.Include(x => x.Sources).Where(x => x.Id == id && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            var product = await _db.Products.Where(x => x.Id == id && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
             if (product == null)
                 throw new Exception("Not found.");
 
@@ -159,11 +160,22 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task PatchReviewNeededStatusAsync(long id, bool isReviewNeeded, CancellationToken cancellationToken)
         {
-            var product = await _db.Products.Include(x => x.Sources).Where(x => x.Id == id && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            var product = await _db.Products.Where(x => x.Id == id && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
             if (product == null)
                 throw new Exception("Not found.");
 
             product.IsReviewNeeded = isReviewNeeded;
+
+            await _db.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task PatchSourceStatusAsync(long sourceId, bool isDisabled, CancellationToken cancellationToken)
+        {
+            var source = await _db.Sources.Where(x => x.Id == sourceId && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            if (source == null)
+                throw new Exception("Not found.");
+
+            source.IsDisabled = isDisabled;
 
             await _db.SaveChangesAsync(cancellationToken);
         }
@@ -202,7 +214,8 @@ namespace eCommerceAutomation.API.Service.Product
                     RecordInsertDateTime = source.RecordInsertDateTime,
                     RecordUpdateDateTime = source.RecordUpdateDateTime,
                     ViewId = source.ViewId,
-                    WholesalePriceAdjustment = source.WholesalePriceAdjustment
+                    WholesalePriceAdjustment = source.WholesalePriceAdjustment,
+                    IsDisabled = source.IsDisabled
                 })
             });
         }
