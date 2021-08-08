@@ -146,6 +146,28 @@ namespace eCommerceAutomation.API.Service.Product
             await _db.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task PatchStatusAsync(long id, bool isDisabled, CancellationToken cancellationToken)
+        {
+            var product = await _db.Products.Include(x => x.Sources).Where(x => x.Id == id && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            if (product == null)
+                throw new Exception("Not found.");
+
+            product.IsDisabled = isDisabled;
+
+            await _db.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task PatchReviewNeededStatusAsync(long id, bool isReviewNeeded, CancellationToken cancellationToken)
+        {
+            var product = await _db.Products.Include(x => x.Sources).Where(x => x.Id == id && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            if (product == null)
+                throw new Exception("Not found.");
+
+            product.IsReviewNeeded = isReviewNeeded;
+
+            await _db.SaveChangesAsync(cancellationToken);
+        }
+
         public static IEnumerable<IProduct> ToModel(IEnumerable<Domain.Product> products)
         {
             return products.Select(product => new ProductModel()

@@ -58,5 +58,21 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
 
             return Ok();
         }
+
+        [HttpPatch("{id}/status")]
+        public async Task<ActionResult> PatchStatusAsync([FromRoute] long id, [FromBody] bool isDisabled, CancellationToken cancellationToken)
+        {
+            await _productService.PatchStatusAsync(id, isDisabled, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPatch("{id}/reviewNeededStatus")]
+        public async Task<ActionResult> PatchReviewNeededStatusAsync([FromRoute] long id, [FromBody] bool isReviewNeeded, CancellationToken cancellationToken)
+        {
+            await _productService.PatchReviewNeededStatusAsync(id, isReviewNeeded, cancellationToken);
+
+            return Ok();
+        }
     }
 }
