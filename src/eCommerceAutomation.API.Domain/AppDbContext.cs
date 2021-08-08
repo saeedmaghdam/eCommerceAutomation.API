@@ -15,5 +15,17 @@ namespace eCommerceAutomation.API.Domain
         {
             return new AppDbContext(_options);
         }
+
+        public DbSet<Product> Products
+        {
+            get;
+            set;
+        }
+
+        public DbSet<Source> Sources
+        {
+            get;
+            set;
+        }
     }
 }
