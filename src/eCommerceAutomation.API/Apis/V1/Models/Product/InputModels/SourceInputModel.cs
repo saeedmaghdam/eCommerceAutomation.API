@@ -4,6 +4,12 @@ namespace eCommerceAutomation.API.Apis.V1.Models.Product.InputModels
 {
     public class SourceInputModel
     {
+        public long? Id
+        {
+            get;
+            set;
+        }
+
         public int Priority
         {
             get;

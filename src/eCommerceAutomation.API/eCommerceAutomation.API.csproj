@@ -51,11 +51,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Apis\" />
-    <Folder Include="Apis\V1\" />
     <Folder Include="Apis\V1\Controllers\" />
-    <Folder Include="Apis\V1\Models\" />
-    <Folder Include="Apis\V1\Models\Product\" />
-    <Folder Include="Apis\V1\Models\Product\InputModels\" />
   </ItemGroup>
 </Project>

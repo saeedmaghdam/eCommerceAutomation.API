@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using eCommerceAutomation.API.Domain;
@@ -34,6 +36,15 @@ namespace eCommerceAutomation.API.Service.Product
             {
                 if (string.IsNullOrEmpty(source.Address))
                     throw new System.Exception("Source address is required.");
+
+                try
+                {
+                    JsonSerializer.Deserialize<string[]>(source.Address);
+                }
+                catch
+                {
+                    throw new Exception("Source address is not presented as a valid json.");
+                }
             }
 
             var newProduct = Domain.Product.Create();
@@ -42,7 +53,7 @@ namespace eCommerceAutomation.API.Service.Product
             newProduct.Name = name;
             newProduct.Sources = sources.Select(source => new Domain.Source()
             {
-                Address = source.Address,
+                Address = JsonSerializer.Serialize(JsonSerializer.Deserialize<string[]>(source.Address).Select(x => x.Trim())),
                 PriceAdjustment = source.PriceAdjustment,
                 Priority = source.Priority,
                 RecordInsertDateTime = DateTime.Now,
@@ -68,6 +79,69 @@ namespace eCommerceAutomation.API.Service.Product
 
             product.RecordStatus = Framework.Constants.RecordStatus.Deleted;
             product.RecordUpdateDateTime = DateTime.Now;
+
+            await _db.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task PutSourcesAsync(long id, IEnumerable<SourceServiceInputModel> sources, CancellationToken cancellationToken)
+        {
+            var product = await _db.Products.Include(x => x.Sources).Where(x => x.Id == id && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            if (product == null)
+                throw new Exception("Not found.");
+
+            foreach (var source in sources)
+            {
+                if (string.IsNullOrEmpty(source.Address))
+                    throw new System.Exception("Source address is required.");
+
+                try
+                {
+                    JsonSerializer.Deserialize<string[]>(source.Address);
+                }
+                catch
+                {
+                    throw new Exception("Source address is not presented as a valid json.");
+                }
+            }
+
+            var now = DateTime.Now;
+            foreach (var source in product.Sources)
+            {
+                source.RecordStatus = Framework.Constants.RecordStatus.Deleted;
+                source.RecordUpdateDateTime = now;
+            }
+
+            foreach (var source in sources)
+            {
+                var address = JsonSerializer.Deserialize<string[]>(source.Address).Select(x => x.Trim());
+                var newAddress = JsonSerializer.Serialize(address);
+
+                if (source.Id.HasValue)
+                {
+                    var currentSource = product.Sources.Where(x => x.Id == source.Id.Value).SingleOrDefault();
+
+                    if (currentSource == null)
+                        throw new Exception("Source not found.");
+
+                    currentSource.Address = newAddress;
+                    currentSource.PriceAdjustment = source.PriceAdjustment;
+                    currentSource.Priority = source.Priority;
+                    currentSource.WholesalePriceAdjustment = source.WholesalePriceAdjustment;
+                    currentSource.RecordStatus = Framework.Constants.RecordStatus.Updated;
+                    currentSource.RecordUpdateDateTime = now;
+                }
+                else
+                {
+                    var newSource = Domain.Source.Create();
+                    newSource.Address = newAddress;
+                    newSource.PriceAdjustment = source.PriceAdjustment;
+                    newSource.Priority = source.Priority;
+                    newSource.WholesalePriceAdjustment = source.WholesalePriceAdjustment;
+                    newSource.SourceType = source.SourceType;
+
+                    product.Sources.Add(newSource);
+                }
+            }
 
             await _db.SaveChangesAsync(cancellationToken);
         }

@@ -29,7 +29,7 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
                 Address = source.Address,
                 PriceAdjustment = source.PriceAdjustment,
                 Priority = source.Priority,
-                WholesalePriceAdjustment = source.WholesalePriceAdjustment
+                WholesalePriceAdjustment = source.WholesalePriceAdjustment,
             }), cancellationToken);
 
             return product.Id;
@@ -39,6 +39,22 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
         public async Task<ActionResult> DeleteAsync([FromRoute] long id, CancellationToken cancellationToken)
         {
             await _productService.DeleteAsync(id, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutSourcesAsync([FromRoute] long id, [FromBody] PatchSourcesInputModel model, CancellationToken cancellationToken)
+        {
+            await _productService.PutSourcesAsync(id, model.Sources.Select(source => new SourceServiceInputModel()
+            {
+                Id = source.Id,
+                SourceType = source.SourceType,
+                Address = source.Address,
+                PriceAdjustment = source.PriceAdjustment,
+                Priority = source.Priority,
+                WholesalePriceAdjustment = source.WholesalePriceAdjustment
+            }), cancellationToken);
 
             return Ok();
         }

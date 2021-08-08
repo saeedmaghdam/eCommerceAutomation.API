@@ -4,6 +4,12 @@ namespace eCommerceAutomation.API.Framework.Services.Product.ServiceInputModel
 {
     public class SourceServiceInputModel
     {
+        public long? Id
+        {
+            get;
+            set;
+        }
+
         public int Priority
         {
             get;
