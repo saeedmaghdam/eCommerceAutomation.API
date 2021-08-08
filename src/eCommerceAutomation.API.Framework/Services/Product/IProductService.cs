@@ -6,6 +6,8 @@ namespace eCommerceAutomation.API.Framework.Services.Product
 {
     public interface IProductService
     {
+        Task<IEnumerable<IProduct>> GetAsync(bool? isReviewNeeded, bool? isDisabled, bool? isInitialized, bool? isSourcesDisabled, CancellationToken cancellationToken);
+
         Task<IProduct> CreateAsync(string externalId, string name, string url, IEnumerable<ServiceInputModel.SourceServiceInputModel> sources, CancellationToken cancellationToken);
 
         Task DeleteAsync(long id, CancellationToken cancellationToken);

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -17,6 +16,29 @@ namespace eCommerceAutomation.API.Service.Product
         private readonly AppDbContext _db;
 
         public ProductService(AppDbContext db) => _db = db;
+
+        public async Task<IEnumerable<IProduct>> GetAsync(bool? isReviewNeeded, bool? isDisabled, bool? isInitialized, bool? isSourcesDisabled, CancellationToken cancellationToken)
+        {
+            var query = _db.Products.AsQueryable();
+
+            if (isSourcesDisabled.HasValue)
+                query = query.Include(x => x.Sources.Where(z => z.IsDisabled == isSourcesDisabled.Value));
+            else
+                query = query.Include(x => x.Sources);
+
+            if (isReviewNeeded.HasValue)
+                query = query.Where(x => x.IsReviewNeeded == isReviewNeeded.Value);
+
+            if (isDisabled.HasValue)
+                query = query.Where(x => x.IsDisabled == isDisabled.Value);
+
+            if (isInitialized.HasValue)
+                query = query.Where(x => x.IsInitialized == isInitialized.Value);
+
+            var items = await query.ToListAsync(cancellationToken);
+
+            return ToModel(items);
+        }
 
         public async Task<IProduct> CreateAsync(string externalId, string name, string url, IEnumerable<SourceServiceInputModel> sources, CancellationToken cancellationToken)
         {

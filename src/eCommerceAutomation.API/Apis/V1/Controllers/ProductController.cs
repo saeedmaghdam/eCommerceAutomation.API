@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using eCommerceAutomation.API.Apis.V1.Models.Product.InputModels;
+using eCommerceAutomation.API.Apis.V1.Models.Product.ViewModels;
 using eCommerceAutomation.API.Framework.Services.Product;
 using eCommerceAutomation.API.Framework.Services.Product.ServiceInputModel;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +21,51 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
         public ProductController(IProductService productService)
         {
             _productService = productService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProductViewModel>>> GetAsync(bool? isReviewNeeded, bool? isDisabled, bool? isInitialized, bool? isSourcesDisabled, CancellationToken cancellationToken)
+        {
+            var products = await _productService.GetAsync(isReviewNeeded, isDisabled, isInitialized, isSourcesDisabled, cancellationToken);
+            if (!products.Any())
+                return NoContent();
+
+            return Ok(products.Select(product => new ProductViewModel()
+            {
+                Sources = product.Sources.Select(source => new SourceViewModel()
+                {
+                    ViewId = source.ViewId,
+                    RecordUpdateDateTime = source.RecordUpdateDateTime,
+                    RecordStatus = source.RecordStatus,
+                    RecordInsertDateTime = source.RecordInsertDateTime,
+                    Address = source.Address,
+                    Id = source.Id,
+                    IsDisabled = source.IsDisabled,
+                    Metadata = source.Metadata,
+                    OldMetadata = source.OldMetadata,
+                    PriceAdjustment = source.PriceAdjustment,
+                    Priority = source.Priority,
+                    SourceType = source.SourceType,
+                    WholesalePriceAdjustment = source.WholesalePriceAdjustment
+                }),
+                ExternalId = product.ExternalId,
+                Id = product.Id,
+                IsDisabled = product.IsDisabled,
+                IsInitialized = product.IsInitialized,
+                IsReviewNeeded = product.IsReviewNeeded,
+                MinimumQuantity = product.MinimumQuantity,
+                Name = product.Name,
+                OriginalMinimumQuantity = product.OriginalMinimumQuantity,
+                OriginalPrice = product.OriginalPrice,
+                OriginalWholesalePrices = product.OriginalWholesalePrices,
+                Price = product.Price,
+                RecordInsertDateTime = product.RecordInsertDateTime,
+                RecordStatus = product.RecordStatus,
+                RecordUpdateDateTime = product.RecordUpdateDateTime,
+                Url = product.Url,
+                ViewId = product.ViewId,
+                WholesalePrices = product.WholesalePrices
+            }));
         }
 
         [HttpPost]
