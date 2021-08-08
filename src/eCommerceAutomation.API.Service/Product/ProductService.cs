@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using eCommerceAutomation.API.Domain;
 using eCommerceAutomation.API.Framework.Services.Product;
 using eCommerceAutomation.API.Framework.Services.Product.ServiceInputModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace eCommerceAutomation.API.Service.Product
 {
@@ -57,6 +58,18 @@ namespace eCommerceAutomation.API.Service.Product
             await _db.SaveChangesAsync(cancellationToken);
 
             return ToModel(new[] { newProduct }).Single();
+        }
+
+        public async Task DeleteAsync(long id, CancellationToken cancellationToken)
+        {
+            var product = await _db.Products.Where(x => x.Id == id && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            if (product == null)
+                throw new Exception("Not found.");
+
+            product.RecordStatus = Framework.Constants.RecordStatus.Deleted;
+            product.RecordUpdateDateTime = DateTime.Now;
+
+            await _db.SaveChangesAsync(cancellationToken);
         }
 
         public static IEnumerable<IProduct> ToModel(IEnumerable<Domain.Product> products)

@@ -34,5 +34,13 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
 
             return product.Id;
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAsync([FromRoute] long id, CancellationToken cancellationToken)
+        {
+            await _productService.DeleteAsync(id, cancellationToken);
+
+            return Ok();
+        }
     }
 }
