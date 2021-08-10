@@ -39,5 +39,11 @@ namespace eCommerceAutomation.API.Apis.V1.Models.Product.InputModels
             get;
             set;
         }
+
+        public string Key
+        {
+            get;
+            set;
+        }
     }
 }

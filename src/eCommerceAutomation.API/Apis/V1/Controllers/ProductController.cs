@@ -46,7 +46,8 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
                     PriceAdjustment = source.PriceAdjustment,
                     Priority = source.Priority,
                     SourceType = source.SourceType,
-                    WholesalePriceAdjustment = source.WholesalePriceAdjustment
+                    WholesalePriceAdjustment = source.WholesalePriceAdjustment,
+                    Key = source.Key
                 }),
                 ExternalId = product.ExternalId,
                 Id = product.Id,
@@ -78,6 +79,7 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
                 PriceAdjustment = source.PriceAdjustment,
                 Priority = source.Priority,
                 WholesalePriceAdjustment = source.WholesalePriceAdjustment,
+                Key = source.Key
             }), cancellationToken);
 
             return product.Id;
@@ -101,7 +103,8 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
                 Address = source.Address,
                 PriceAdjustment = source.PriceAdjustment,
                 Priority = source.Priority,
-                WholesalePriceAdjustment = source.WholesalePriceAdjustment
+                WholesalePriceAdjustment = source.WholesalePriceAdjustment,
+                Key = source.Key
             }), cancellationToken);
 
             return Ok();

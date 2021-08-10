@@ -39,5 +39,11 @@ namespace eCommerceAutomation.API.Framework.Services.Product.ServiceInputModel
             get;
             set;
         }
+
+        public string Key
+        {
+            get;
+            set;
+        }
     }
 }

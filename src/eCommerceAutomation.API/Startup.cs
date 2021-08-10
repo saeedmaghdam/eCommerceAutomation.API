@@ -24,6 +24,7 @@ namespace eCommerceAutomation.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ISourceNameService, SourceNameService>();
 
             services.AddControllers();
             services.AddHealthChecks();

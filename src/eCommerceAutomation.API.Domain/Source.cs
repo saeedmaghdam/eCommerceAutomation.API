@@ -76,6 +76,13 @@ namespace eCommerceAutomation.API.Domain
             set;
         }
 
+        [Column("key")]
+        public string Key
+        {
+            get;
+            set;
+        }
+
         public static Source Create()
         {
             var source = new Source();

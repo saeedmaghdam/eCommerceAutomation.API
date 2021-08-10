@@ -85,7 +85,8 @@ namespace eCommerceAutomation.API.Service.Product
                 SourceType = source.SourceType,
                 ViewId = Guid.NewGuid(),
                 WholesalePriceAdjustment = source.WholesalePriceAdjustment,
-                IsDisabled = false
+                IsDisabled = false,
+                Key = source.Key
             }).ToList();
             _db.Products.Add(newProduct);
 
@@ -152,6 +153,7 @@ namespace eCommerceAutomation.API.Service.Product
                     currentSource.WholesalePriceAdjustment = source.WholesalePriceAdjustment;
                     currentSource.RecordStatus = Framework.Constants.RecordStatus.Updated;
                     currentSource.RecordUpdateDateTime = now;
+                    currentSource.Key = source.Key;
                 }
                 else
                 {
@@ -161,6 +163,7 @@ namespace eCommerceAutomation.API.Service.Product
                     newSource.Priority = source.Priority;
                     newSource.WholesalePriceAdjustment = source.WholesalePriceAdjustment;
                     newSource.SourceType = source.SourceType;
+                    newSource.Key = source.Key;
 
                     product.Sources.Add(newSource);
                 }
@@ -237,7 +240,8 @@ namespace eCommerceAutomation.API.Service.Product
                     RecordUpdateDateTime = source.RecordUpdateDateTime,
                     ViewId = source.ViewId,
                     WholesalePriceAdjustment = source.WholesalePriceAdjustment,
-                    IsDisabled = source.IsDisabled
+                    IsDisabled = source.IsDisabled,
+                    Key = source.Key
                 })
             });
         }

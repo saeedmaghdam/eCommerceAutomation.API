@@ -27,5 +27,11 @@ namespace eCommerceAutomation.API.Domain
             get;
             set;
         }
+
+        public DbSet<SourceName> SourceNames
+        {
+            get;
+            set;
+        }
     }
 }

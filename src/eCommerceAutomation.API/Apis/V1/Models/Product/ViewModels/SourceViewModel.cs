@@ -82,5 +82,11 @@ namespace eCommerceAutomation.API.Apis.V1.Models.Product.ViewModels
             get;
             set;
         }
+
+        public string Key
+        {
+            get;
+            set;
+        }
     }
 }
