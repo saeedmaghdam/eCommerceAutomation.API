@@ -17,7 +17,7 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task<IEnumerable<ISourceName>> GetAsync(SourceType? sourceType, CancellationToken cancellationToken)
         {
-            var query = _db.SourceNames.AsQueryable();
+            var query = _db.SourceNames.Where(x => x.RecordStatus != Framework.Constants.RecordStatus.Deleted).AsQueryable();
             if (sourceType.HasValue)
                 query = query.Where(x => x.SourceType == sourceType);
 

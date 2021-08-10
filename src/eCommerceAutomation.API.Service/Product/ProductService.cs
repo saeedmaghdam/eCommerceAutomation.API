@@ -19,7 +19,7 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task<IEnumerable<IProduct>> GetAsync(bool? isReviewNeeded, bool? isDisabled, bool? isInitialized, bool? isSourcesDisabled, CancellationToken cancellationToken)
         {
-            var query = _db.Products.AsQueryable();
+            var query = _db.Products.Where(x => x.RecordStatus != Framework.Constants.RecordStatus.Deleted).AsQueryable();
 
             if (isSourcesDisabled.HasValue)
                 query = query.Include(x => x.Sources.Where(z => z.IsDisabled == isSourcesDisabled.Value));
