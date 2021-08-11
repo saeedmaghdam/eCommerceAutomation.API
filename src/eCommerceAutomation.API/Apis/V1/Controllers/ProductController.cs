@@ -127,5 +127,13 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
 
             return Ok();
         }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchAsync([FromRoute] long id, [FromBody] PatchProductInputModel model, CancellationToken cancellationToken)
+        {
+            await _productService.PatchProductAsync(id, model.Name, model.OriginalMinimumQuantity, model.OriginalPrice, model.OriginalWholesalePrices, model.MinimumQuantity, model.Price, model.WholesalePrices, model.IsReviewNeeded, model.IsInitialized, cancellationToken);
+
+            return Ok();
+        }
     }
 }

@@ -194,6 +194,42 @@ namespace eCommerceAutomation.API.Service.Product
             await _db.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task PatchProductAsync(long id, string name, int? originalMinimumQuantity, decimal? originalPrice, string originalWholesalePrices, int? minimumQuantity, decimal? price, string wholesalePrices, bool? isReviewNeeded, bool? isInitialized, CancellationToken cancellationToken)
+        {
+            var product = await _db.Products.Where(product => product.Id == id && product.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            if (product == null)
+                throw new Exception("Not found.");
+
+            if (!string.IsNullOrEmpty(name))
+                product.Name = name;
+
+            if (originalMinimumQuantity.HasValue)
+                product.OriginalMinimumQuantity = originalMinimumQuantity;
+
+            if (originalPrice.HasValue)
+                product.OriginalPrice = originalPrice;
+
+            if (!string.IsNullOrEmpty(originalWholesalePrices))
+                product.OriginalWholesalePrices = originalWholesalePrices;
+
+            if (minimumQuantity.HasValue)
+                product.MinimumQuantity = minimumQuantity;
+
+            if (price.HasValue)
+                product.Price = price;
+
+            if (!string.IsNullOrEmpty(wholesalePrices))
+                product.WholesalePrices = wholesalePrices;
+
+            if (isReviewNeeded.HasValue)
+                product.IsReviewNeeded = isReviewNeeded.Value;
+
+            if (isInitialized.HasValue)
+                product.IsInitialized = isInitialized.Value;
+
+            await _db.SaveChangesAsync(cancellationToken);
+        }
+
         public static IEnumerable<IProduct> ToModel(IEnumerable<Domain.Product> products)
         {
             return products.Select(product => new ProductModel()
