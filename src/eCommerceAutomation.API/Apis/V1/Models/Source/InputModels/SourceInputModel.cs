@@ -1,6 +1,6 @@
 ﻿using eCommerceAutomation.API.Framework.Constants;
 
-namespace eCommerceAutomation.API.Apis.V1.Models.Product.InputModels
+namespace eCommerceAutomation.API.Apis.V1.Models.Source.InputModels
 {
     public class SourceInputModel
     {

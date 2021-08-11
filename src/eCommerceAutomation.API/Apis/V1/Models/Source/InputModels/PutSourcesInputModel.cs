@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace eCommerceAutomation.API.Apis.V1.Models.Product.InputModels
+namespace eCommerceAutomation.API.Apis.V1.Models.Source.InputModels
 {
-    public class PatchSourcesInputModel
+    public class PutSourcesInputModel
     {
         public IEnumerable<SourceInputModel> Sources
         {

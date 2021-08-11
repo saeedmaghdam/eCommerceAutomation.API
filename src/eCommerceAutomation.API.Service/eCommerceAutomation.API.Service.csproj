@@ -12,7 +12,4 @@
   <ItemGroup>
     <None Remove="Product\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Product\" />
-  </ItemGroup>
 </Project>

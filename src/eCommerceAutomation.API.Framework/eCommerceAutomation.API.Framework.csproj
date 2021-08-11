@@ -9,7 +9,6 @@
     <None Remove="Services\Product\ServiceInputModel\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\Product\" />
     <Folder Include="Services\Product\ServiceInputModel\" />
   </ItemGroup>
 </Project>

@@ -19,28 +19,28 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task<IEnumerable<IProduct>> GetAsync(bool? isReviewNeeded, bool? isDisabled, bool? isInitialized, bool? isSourcesDisabled, CancellationToken cancellationToken)
         {
-            var query = _db.Products.Where(x => x.RecordStatus != Framework.Constants.RecordStatus.Deleted).AsQueryable();
+            var query = _db.Products.Where(product => product.RecordStatus != Framework.Constants.RecordStatus.Deleted).AsQueryable();
 
             if (isSourcesDisabled.HasValue)
-                query = query.Include(x => x.Sources.Where(z => z.IsDisabled == isSourcesDisabled.Value));
+                query = query.Include(product => product.Sources.Where(source => source.IsDisabled == isSourcesDisabled.Value && source.RecordStatus != Framework.Constants.RecordStatus.Deleted));
             else
-                query = query.Include(x => x.Sources);
+                query = query.Include(product => product.Sources.Where(source => source.RecordStatus != Framework.Constants.RecordStatus.Deleted));
 
             if (isReviewNeeded.HasValue)
-                query = query.Where(x => x.IsReviewNeeded == isReviewNeeded.Value);
+                query = query.Where(product => product.IsReviewNeeded == isReviewNeeded.Value);
 
             if (isDisabled.HasValue)
-                query = query.Where(x => x.IsDisabled == isDisabled.Value);
+                query = query.Where(product => product.IsDisabled == isDisabled.Value);
 
             if (isInitialized.HasValue)
-                query = query.Where(x => x.IsInitialized == isInitialized.Value);
+                query = query.Where(product => product.IsInitialized == isInitialized.Value);
 
             var items = await query.ToListAsync(cancellationToken);
 
             return ToModel(items);
         }
 
-        public async Task<IProduct> CreateAsync(string externalId, string name, string url, IEnumerable<SourceServiceInputModel> sources, CancellationToken cancellationToken)
+        public async Task<IProduct> CreateWithSourcesAsync(string externalId, string name, string url, IEnumerable<SourceServiceInputModel> sources, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(externalId))
                 throw new System.Exception("External Id is required.");
@@ -97,7 +97,7 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task DeleteAsync(long id, CancellationToken cancellationToken)
         {
-            var product = await _db.Products.Where(x => x.Id == id && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            var product = await _db.Products.Where(product => product.Id == id && product.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
             if (product == null)
                 throw new Exception("Not found.");
 
@@ -109,7 +109,7 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task PutSourcesAsync(long id, IEnumerable<SourceServiceInputModel> sources, CancellationToken cancellationToken)
         {
-            var product = await _db.Products.Include(x => x.Sources).Where(x => x.Id == id && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            var product = await _db.Products.Include(product => product.Sources).Where(product => product.Id == id && product.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
             if (product == null)
                 throw new Exception("Not found.");
 
@@ -174,7 +174,7 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task PatchStatusAsync(long id, bool isDisabled, CancellationToken cancellationToken)
         {
-            var product = await _db.Products.Where(x => x.Id == id && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            var product = await _db.Products.Where(product => product.Id == id && product.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
             if (product == null)
                 throw new Exception("Not found.");
 
@@ -185,22 +185,11 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task PatchReviewNeededStatusAsync(long id, bool isReviewNeeded, CancellationToken cancellationToken)
         {
-            var product = await _db.Products.Where(x => x.Id == id && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            var product = await _db.Products.Where(product => product.Id == id && product.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
             if (product == null)
                 throw new Exception("Not found.");
 
             product.IsReviewNeeded = isReviewNeeded;
-
-            await _db.SaveChangesAsync(cancellationToken);
-        }
-
-        public async Task PatchSourceStatusAsync(long sourceId, bool isDisabled, CancellationToken cancellationToken)
-        {
-            var source = await _db.Sources.Where(x => x.Id == sourceId && x.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
-            if (source == null)
-                throw new Exception("Not found.");
-
-            source.IsDisabled = isDisabled;
 
             await _db.SaveChangesAsync(cancellationToken);
         }

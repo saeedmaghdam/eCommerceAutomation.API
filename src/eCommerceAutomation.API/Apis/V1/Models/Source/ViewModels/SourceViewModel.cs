@@ -1,7 +1,7 @@
 ﻿using System;
 using eCommerceAutomation.API.Framework.Constants;
 
-namespace eCommerceAutomation.API.Apis.V1.Models.Product.ViewModels
+namespace eCommerceAutomation.API.Apis.V1.Models.Source.ViewModels
 {
     public class SourceViewModel
     {

@@ -5,6 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using eCommerceAutomation.API.Apis.V1.Models.Product.InputModels;
 using eCommerceAutomation.API.Apis.V1.Models.Product.ViewModels;
+using eCommerceAutomation.API.Apis.V1.Models.Source.InputModels;
+using eCommerceAutomation.API.Apis.V1.Models.Source.ViewModels;
 using eCommerceAutomation.API.Framework.Services.Product;
 using eCommerceAutomation.API.Framework.Services.Product.ServiceInputModel;
 using Microsoft.AspNetCore.Mvc;
@@ -69,10 +71,10 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
             }));
         }
 
-        [HttpPost]
+        [HttpPost("createProductWithSources")]
         public async Task<ActionResult<long>> CreateAsync([FromBody] ProductCreateInputModel model, CancellationToken cancellationToken)
         {
-            var product = await _productService.CreateAsync(model.ExternalId, model.Name, model.Url, model.Sources.Select(source => new SourceServiceInputModel()
+            var product = await _productService.CreateWithSourcesAsync(model.ExternalId, model.Name, model.Url, model.Sources.Select(source => new SourceServiceInputModel()
             {
                 SourceType = source.SourceType,
                 Address = source.Address,
@@ -85,16 +87,8 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
             return product.Id;
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAsync([FromRoute] long id, CancellationToken cancellationToken)
-        {
-            await _productService.DeleteAsync(id, cancellationToken);
-
-            return Ok();
-        }
-
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutSourcesAsync([FromRoute] long id, [FromBody] PatchSourcesInputModel model, CancellationToken cancellationToken)
+        public async Task<ActionResult> PutSourcesAsync([FromRoute] long id, [FromBody] PutSourcesInputModel model, CancellationToken cancellationToken)
         {
             await _productService.PutSourcesAsync(id, model.Sources.Select(source => new SourceServiceInputModel()
             {
@@ -106,6 +100,14 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
                 WholesalePriceAdjustment = source.WholesalePriceAdjustment,
                 Key = source.Key
             }), cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAsync([FromRoute] long id, CancellationToken cancellationToken)
+        {
+            await _productService.DeleteAsync(id, cancellationToken);
 
             return Ok();
         }
@@ -122,14 +124,6 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
         public async Task<ActionResult> PatchReviewNeededStatusAsync([FromRoute] long id, [FromBody] bool isReviewNeeded, CancellationToken cancellationToken)
         {
             await _productService.PatchReviewNeededStatusAsync(id, isReviewNeeded, cancellationToken);
-
-            return Ok();
-        }
-
-        [HttpPatch("source/{sourceId}/status")]
-        public async Task<ActionResult> PatchSourceStatusAsync([FromRoute] long sourceId, [FromBody] bool isDisabled, CancellationToken cancellationToken)
-        {
-            await _productService.PatchSourceStatusAsync(sourceId, isDisabled, cancellationToken);
 
             return Ok();
         }

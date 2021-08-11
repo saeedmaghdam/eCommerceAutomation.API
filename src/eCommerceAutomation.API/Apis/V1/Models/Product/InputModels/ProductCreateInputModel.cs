@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using eCommerceAutomation.API.Apis.V1.Models.Source.InputModels;
 
 namespace eCommerceAutomation.API.Apis.V1.Models.Product.InputModels
 {

@@ -8,7 +8,7 @@ namespace eCommerceAutomation.API.Framework.Services.Product
     {
         Task<IEnumerable<IProduct>> GetAsync(bool? isReviewNeeded, bool? isDisabled, bool? isInitialized, bool? isSourcesDisabled, CancellationToken cancellationToken);
 
-        Task<IProduct> CreateAsync(string externalId, string name, string url, IEnumerable<ServiceInputModel.SourceServiceInputModel> sources, CancellationToken cancellationToken);
+        Task<IProduct> CreateWithSourcesAsync(string externalId, string name, string url, IEnumerable<ServiceInputModel.SourceServiceInputModel> sources, CancellationToken cancellationToken);
 
         Task DeleteAsync(long id, CancellationToken cancellationToken);
 
@@ -17,7 +17,5 @@ namespace eCommerceAutomation.API.Framework.Services.Product
         Task PatchStatusAsync(long id, bool isDisabled, CancellationToken cancellationToken);
 
         Task PatchReviewNeededStatusAsync(long id, bool isReviewNeeded, CancellationToken cancellationToken);
-
-        Task PatchSourceStatusAsync(long sourceId, bool isDisabled, CancellationToken cancellationToken);
     }
 }
