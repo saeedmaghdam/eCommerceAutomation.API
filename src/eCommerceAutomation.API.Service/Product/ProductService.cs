@@ -69,6 +69,9 @@ namespace eCommerceAutomation.API.Service.Product
                 }
             }
 
+            if (await _db.Products.Where(product => product.ExternalId == externalId && product.RecordStatus != Framework.Constants.RecordStatus.Deleted).AnyAsync(cancellationToken))
+                throw new Exception($"Product with external id {externalId} already exists.");
+
             var newProduct = Domain.Product.Create();
             newProduct.ExternalId = externalId;
             newProduct.Url = url;
