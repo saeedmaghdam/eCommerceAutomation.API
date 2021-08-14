@@ -58,5 +58,11 @@ namespace eCommerceAutomation.API.Service.Product
             get;
             set;
         }
+
+        public bool IsActive
+        {
+            get;
+            set;
+        }
     }
 }

@@ -55,5 +55,19 @@ namespace eCommerceAutomation.API.Service.Product
 
             await _db.SaveChangesAsync(cancellationToken);
         }
+
+        public async Task ActiveSourceAsync(long id, CancellationToken cancellationToken)
+        {
+            var source = await _db.Sources.Where(source => source.Id == id && source.RecordStatus != RecordStatus.Deleted).SingleOrDefaultAsync();
+            if (source == null)
+                throw new Exception("Not found.");
+
+            foreach (var item in await _db.Sources.Where(x => x.RecordStatus != RecordStatus.Deleted).ToListAsync(cancellationToken))
+                item.IsActive = false;
+
+            source.IsActive = true;
+
+            await _db.SaveChangesAsync(cancellationToken);
+        }
     }
 }

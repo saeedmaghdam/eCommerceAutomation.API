@@ -48,7 +48,9 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
                     Priority = source.Priority,
                     SourceType = source.SourceType,
                     WholesalePriceAdjustment = source.WholesalePriceAdjustment,
-                    Key = source.Key
+                    Key = source.Key,
+                    IsActive = source.IsActive
+
                 }),
                 ExternalId = product.ExternalId,
                 Id = product.Id,

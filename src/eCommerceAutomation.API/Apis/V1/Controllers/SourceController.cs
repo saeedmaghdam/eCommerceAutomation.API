@@ -30,5 +30,13 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
 
             return Ok();
         }
+
+        [HttpPost("{id}/active")]
+        public async Task<ActionResult> ActiveSourceAsync([FromRoute] long id, CancellationToken cancellationToken)
+        {
+            await _sourceService.ActiveSourceAsync(id, cancellationToken);
+
+            return Ok();
+        }
     }
 }

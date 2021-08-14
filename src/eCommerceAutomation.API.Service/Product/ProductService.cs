@@ -270,7 +270,8 @@ namespace eCommerceAutomation.API.Service.Product
                     ViewId = source.ViewId,
                     WholesalePriceAdjustment = source.WholesalePriceAdjustment,
                     IsDisabled = source.IsDisabled,
-                    Key = source.Key
+                    Key = source.Key,
+                    IsActive = source.IsActive
                 })
             });
         }

@@ -88,5 +88,11 @@ namespace eCommerceAutomation.API.Apis.V1.Models.Source.ViewModels
             get;
             set;
         }
+
+        public bool IsActive
+        {
+            get;
+            set;
+        }
     }
 }

@@ -83,6 +83,13 @@ namespace eCommerceAutomation.API.Domain
             set;
         }
 
+        [Column("is_active")]
+        public bool IsActive
+        {
+            get;
+            set;
+        }
+
         public static Source Create()
         {
             var source = new Source();

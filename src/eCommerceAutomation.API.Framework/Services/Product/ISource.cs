@@ -46,13 +46,19 @@ namespace eCommerceAutomation.API.Framework.Services.Product
             set;
         }
 
-        public bool IsDisabled
+        bool IsDisabled
         {
             get;
             set;
         }
 
-        public string Key
+        string Key
+        {
+            get;
+            set;
+        }
+
+        bool IsActive
         {
             get;
             set;
