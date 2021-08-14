@@ -41,6 +41,15 @@ namespace eCommerceAutomation.API.Service.Product
             return ToModel(items);
         }
 
+        public async Task<IProduct> GetByIdAsync(long id, CancellationToken cancellationToken)
+        {
+            var product = await _db.Products.Include(product => product.Sources.Where(source => source.RecordStatus != RecordStatus.Deleted)).Where(product => product.Id == id && product.RecordStatus != RecordStatus.Deleted).SingleOrDefaultAsync();
+            if (product == null)
+                throw new Exception("Not found.");
+
+            return ToModel(new[] { product }).Single();
+        }
+
         public async Task<IProduct> CreateWithSourcesAsync(string externalId, string name, string url, IEnumerable<SourceServiceInputModel> sources, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(externalId))

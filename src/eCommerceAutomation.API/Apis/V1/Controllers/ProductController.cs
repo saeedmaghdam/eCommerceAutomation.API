@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using eCommerceAutomation.API.Apis.V1.Models.Product.InputModels;
@@ -8,6 +9,9 @@ using eCommerceAutomation.API.Apis.V1.Models.Source.InputModels;
 using eCommerceAutomation.API.Apis.V1.Models.Source.ViewModels;
 using eCommerceAutomation.API.Framework.Services.Product;
 using eCommerceAutomation.API.Framework.Services.Product.ServiceInputModel;
+using eCommerceAutomation.Framework;
+using eCommerceAutomation.Framework.Constants;
+using eCommerceAutomation.Framework.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eCommerceAutomation.API.Apis.V1.Controllers
@@ -18,10 +22,12 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
+        private readonly CommonHelper _commonHelper;
 
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService, CommonHelper commonHelper)
         {
             _productService = productService;
+            _commonHelper = commonHelper;
         }
 
         [HttpGet]
@@ -135,6 +141,40 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
             await _productService.PatchProductAsync(id, model.Name, model.OriginalMinimumQuantity, model.OriginalPrice, model.OriginalWholesalePrices, model.MinimumQuantity, model.Price, model.WholesalePrices, model.IsReviewNeeded, model.IsInitialized, cancellationToken);
 
             return Ok();
+        }
+
+        [HttpPost("{id}/source/{sourceId}/adjustWebsiteModel")]
+        public async Task<ActionResult> PostAdjustWebsiteAsync([FromRoute] long id, [FromRoute] long sourceId, [FromBody] PostAdjustWebsiteInputModel model, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(model.PriceAdjustment))
+                return UnprocessableEntity("PriceAdjustment is required.");
+
+            var customPriceAdjustment = model.PriceAdjustment.Replace("+", "").Replace("-", "").Replace("%", "");
+            if (!decimal.TryParse(customPriceAdjustment, out var tempCustomPriceAdjustment))
+                return Json(UnprocessableEntity("PriceAdjustment is not well-formed."));
+
+            if (string.IsNullOrEmpty(model.WholesalePriceAdjustment))
+                return UnprocessableEntity("WholesalePriceAdjustment is required.");
+
+            var customRetailPriceAdjustment = model.WholesalePriceAdjustment.Replace("+", "").Replace("-", "").Replace("%", "");
+            if (!decimal.TryParse(customRetailPriceAdjustment, out var tempCustomRetailPriceAdjustment))
+                return Json(UnprocessableEntity("WholesalePriceAdjustment is not well-formed."));
+
+            var product = await _productService.GetByIdAsync(id, cancellationToken);
+
+            var source = product.Sources.Single(x => x.Id == sourceId);
+            if (source.SourceType != SourceType.Website)
+                return BadRequest("Source type is not website");
+
+            var newMetadata = JsonSerializer.Deserialize<WebsiteMetadataModel>(source.Metadata);
+
+            var adjustedMetadata = _commonHelper.WebsitePriceAdjustment(newMetadata, model.PriceAdjustment, model.WholesalePriceAdjustment);
+
+            var result = new PostAdjustWebsiteViewModel();
+            result.Price = adjustedMetadata.Price;
+            result.WholesalePrices = adjustedMetadata.WholesalePrices;
+
+            return Json(Ok(JsonSerializer.Serialize(result)));
         }
     }
 }

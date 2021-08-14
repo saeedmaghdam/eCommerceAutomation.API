@@ -27,6 +27,8 @@ namespace eCommerceAutomation.API
             services.AddScoped<ISourceService, SourceService>();
             services.AddScoped<ISourceNameService, SourceNameService>();
 
+            eCommerceAutomation.Framework.Runtime.Build(services);
+
             services.AddControllers();
             services.AddHealthChecks();
             // Register the Swagger generator, defining 1 or more Swagger documents
