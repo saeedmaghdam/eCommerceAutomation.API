@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -87,7 +86,7 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
             return product.Id;
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}/Sources")]
         public async Task<ActionResult> PutSourcesAsync([FromRoute] long id, [FromBody] PutSourcesInputModel model, CancellationToken cancellationToken)
         {
             await _productService.PutSourcesAsync(id, model.Sources.Select(source => new SourceServiceInputModel()

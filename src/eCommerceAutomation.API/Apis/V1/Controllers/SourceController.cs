@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using eCommerceAutomation.API.Apis.V1.Models.Source.InputModels;
 using eCommerceAutomation.API.Framework.Services.Product;
-using eCommerceAutomation.API.Framework.Services.Product.ServiceInputModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eCommerceAutomation.API.Apis.V1.Controllers
