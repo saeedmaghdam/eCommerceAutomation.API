@@ -144,7 +144,7 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
         }
 
         [HttpPost("{id}/source/{sourceId}/adjustWebsiteModel")]
-        public async Task<ActionResult> PostAdjustWebsiteAsync([FromRoute] long id, [FromRoute] long sourceId, [FromBody] PostAdjustWebsiteInputModel model, CancellationToken cancellationToken)
+        public async Task<ActionResult<PostAdjustWebsiteViewModel>> PostAdjustWebsiteAsync([FromRoute] long id, [FromRoute] long sourceId, [FromBody] PostAdjustWebsiteInputModel model, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(model.PriceAdjustment))
                 return UnprocessableEntity("PriceAdjustment is required.");
@@ -174,7 +174,32 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
             result.Price = adjustedMetadata.Price;
             result.WholesalePrices = adjustedMetadata.WholesalePrices;
 
-            return Json(Ok(JsonSerializer.Serialize(result)));
+            return Ok(result);
+        }
+
+        [HttpPost("{id}/source/{sourceId}/adjustTelegramModel")]
+        public async Task<ActionResult<PostAdjustTelegramViewModel>> PostAdjustTelegramAsync([FromRoute] long id, [FromRoute] long sourceId, [FromBody] PostAdjustTelegramInputModel model, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(model.PriceAdjustment))
+                return UnprocessableEntity("PriceAdjustment is required.");
+
+            var customPriceAdjustment = model.PriceAdjustment.Replace("+", "").Replace("-", "").Replace("%", "");
+            if (!decimal.TryParse(customPriceAdjustment, out var tempCustomPriceAdjustment))
+                return Json(UnprocessableEntity("PriceAdjustment is not well-formed."));
+
+            if (model.Price <= 0)
+                return Json(UnprocessableEntity("Price is invalid."));
+
+            var product = await _productService.GetByIdAsync(id, cancellationToken);
+
+            var source = product.Sources.Single(x => x.Id == sourceId);
+            if (source.SourceType != SourceType.Telegram)
+                return BadRequest("Source type is not telegram");
+
+            var result = new PostAdjustTelegramViewModel();
+            result.Price = _commonHelper.CustomPriceAdjustment(model.Price * _commonHelper.FixedAdjustmentRatio, model.PriceAdjustment);
+
+            return Ok(result);
         }
     }
 }
