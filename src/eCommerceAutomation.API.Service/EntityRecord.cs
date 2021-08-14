@@ -1,5 +1,5 @@
 ﻿using System;
-using eCommerceAutomation.API.Framework.Constants;
+using eCommerceAutomation.Framework.Constants;
 
 namespace eCommerceAutomation.API.Service
 {

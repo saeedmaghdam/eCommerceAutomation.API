@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using eCommerceAutomation.API.Framework.Constants;
+using eCommerceAutomation.Framework.Constants;
 
 namespace eCommerceAutomation.API.Domain
 {
@@ -87,7 +87,7 @@ namespace eCommerceAutomation.API.Domain
         {
             var source = new Source();
             source.ViewId = System.Guid.NewGuid();
-            source.RecordStatus = Framework.Constants.RecordStatus.Inserted;
+            source.RecordStatus = RecordStatus.Inserted;
             source.RecordInsertDateTime = System.DateTime.Now;
             source.RecordUpdateDateTime = System.DateTime.Now;
 

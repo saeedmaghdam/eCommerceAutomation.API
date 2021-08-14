@@ -13,4 +13,9 @@
   <ItemGroup>
     <ProjectReference Include="..\eCommerceAutomation.API.Framework\eCommerceAutomation.API.Framework.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="eCommerceAutomation.Framework">
+      <HintPath>..\..\lib\eCommerceAutomation.Framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

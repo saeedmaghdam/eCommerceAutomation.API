@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using eCommerceAutomation.API.Apis.V1.Models.SourceName.ViewModels;
-using eCommerceAutomation.API.Framework.Constants;
+using eCommerceAutomation.Framework.Constants;
 using eCommerceAutomation.API.Framework.Services.Product;
 using Microsoft.AspNetCore.Mvc;
 

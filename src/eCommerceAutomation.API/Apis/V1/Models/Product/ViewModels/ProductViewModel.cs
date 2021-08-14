@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using eCommerceAutomation.API.Apis.V1.Models.Source.ViewModels;
-using eCommerceAutomation.API.Framework.Constants;
+using eCommerceAutomation.Framework.Constants;
 
 namespace eCommerceAutomation.API.Apis.V1.Models.Product.ViewModels
 {

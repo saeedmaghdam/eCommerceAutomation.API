@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using eCommerceAutomation.API.Framework.Constants;
+using eCommerceAutomation.Framework.Constants;
 
 namespace eCommerceAutomation.API.Domain
 {

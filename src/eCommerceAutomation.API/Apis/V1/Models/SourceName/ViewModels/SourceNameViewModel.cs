@@ -1,4 +1,4 @@
-﻿using eCommerceAutomation.API.Framework.Constants;
+﻿using eCommerceAutomation.Framework.Constants;
 
 namespace eCommerceAutomation.API.Apis.V1.Models.SourceName.ViewModels
 {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using eCommerceAutomation.Framework.Constants;
 
 namespace eCommerceAutomation.API.Domain
 {
@@ -100,7 +101,7 @@ namespace eCommerceAutomation.API.Domain
         {
             var product = new Product();
             product.ViewId = System.Guid.NewGuid();
-            product.RecordStatus = Framework.Constants.RecordStatus.Inserted;
+            product.RecordStatus = RecordStatus.Inserted;
             product.RecordInsertDateTime = System.DateTime.Now;
             product.RecordUpdateDateTime = System.DateTime.Now;
             product.IsDisabled = false;

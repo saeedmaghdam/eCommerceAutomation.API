@@ -1,4 +1,4 @@
-﻿using eCommerceAutomation.API.Framework.Constants;
+﻿using eCommerceAutomation.Framework.Constants;
 
 namespace eCommerceAutomation.API.Framework.Services.Product.ServiceInputModel
 {

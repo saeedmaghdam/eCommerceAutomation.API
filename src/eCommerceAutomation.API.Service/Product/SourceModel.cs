@@ -1,4 +1,4 @@
-﻿using eCommerceAutomation.API.Framework.Constants;
+﻿using eCommerceAutomation.Framework.Constants;
 using eCommerceAutomation.API.Framework.Services.Product;
 
 namespace eCommerceAutomation.API.Service.Product

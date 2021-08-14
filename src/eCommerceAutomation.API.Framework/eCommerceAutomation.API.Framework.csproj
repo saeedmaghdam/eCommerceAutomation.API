@@ -11,4 +11,9 @@
   <ItemGroup>
     <Folder Include="Services\Product\ServiceInputModel\" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="eCommerceAutomation.Framework">
+      <HintPath>..\..\lib\eCommerceAutomation.Framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

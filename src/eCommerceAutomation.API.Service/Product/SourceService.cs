@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using eCommerceAutomation.API.Domain;
-using eCommerceAutomation.API.Framework.Constants;
+using eCommerceAutomation.Framework.Constants;
 using eCommerceAutomation.API.Framework.Services.Product;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +17,7 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task PatchStatusAsync(long id, bool isDisabled, CancellationToken cancellationToken)
         {
-            var source = await _db.Sources.Where(source => source.Id == id && source.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            var source = await _db.Sources.Where(source => source.Id == id && source.RecordStatus != RecordStatus.Deleted).SingleOrDefaultAsync();
             if (source == null)
                 throw new Exception("Not found.");
 
@@ -28,7 +28,7 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task PatchAsync(long id, int? priority, SourceType? sourceType, string address, string oldMetadata, string metadata, string priceAdjustment, string wholesalePriceAdjustment, CancellationToken cancellationToken)
         {
-            var source = await _db.Sources.Where(source => source.Id == id && source.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            var source = await _db.Sources.Where(source => source.Id == id && source.RecordStatus != RecordStatus.Deleted).SingleOrDefaultAsync();
             if (source == null)
                 throw new Exception("Not found.");
 

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using eCommerceAutomation.API.Domain;
-using eCommerceAutomation.API.Framework.Constants;
+using eCommerceAutomation.Framework.Constants;
 using eCommerceAutomation.API.Framework.Services.Product;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +17,7 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task<IEnumerable<ISourceName>> GetAsync(SourceType? sourceType, CancellationToken cancellationToken)
         {
-            var query = _db.SourceNames.Where(x => x.RecordStatus != Framework.Constants.RecordStatus.Deleted).AsQueryable();
+            var query = _db.SourceNames.Where(x => x.RecordStatus != RecordStatus.Deleted).AsQueryable();
             if (sourceType.HasValue)
                 query = query.Where(x => x.SourceType == sourceType);
 

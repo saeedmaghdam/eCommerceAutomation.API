@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using eCommerceAutomation.API.Domain;
 using eCommerceAutomation.API.Framework.Services.Product;
 using eCommerceAutomation.API.Framework.Services.Product.ServiceInputModel;
+using eCommerceAutomation.Framework.Constants;
 using Microsoft.EntityFrameworkCore;
 
 namespace eCommerceAutomation.API.Service.Product
@@ -19,12 +20,12 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task<IEnumerable<IProduct>> GetAsync(bool? isReviewNeeded, bool? isDisabled, bool? isInitialized, bool? isSourcesDisabled, CancellationToken cancellationToken)
         {
-            var query = _db.Products.Where(product => product.RecordStatus != Framework.Constants.RecordStatus.Deleted).AsQueryable();
+            var query = _db.Products.Where(product => product.RecordStatus != RecordStatus.Deleted).AsQueryable();
 
             if (isSourcesDisabled.HasValue)
-                query = query.Include(product => product.Sources.Where(source => source.IsDisabled == isSourcesDisabled.Value && source.RecordStatus != Framework.Constants.RecordStatus.Deleted));
+                query = query.Include(product => product.Sources.Where(source => source.IsDisabled == isSourcesDisabled.Value && source.RecordStatus != RecordStatus.Deleted));
             else
-                query = query.Include(product => product.Sources.Where(source => source.RecordStatus != Framework.Constants.RecordStatus.Deleted));
+                query = query.Include(product => product.Sources.Where(source => source.RecordStatus != RecordStatus.Deleted));
 
             if (isReviewNeeded.HasValue)
                 query = query.Where(product => product.IsReviewNeeded == isReviewNeeded.Value);
@@ -69,7 +70,7 @@ namespace eCommerceAutomation.API.Service.Product
                 }
             }
 
-            if (await _db.Products.Where(product => product.ExternalId == externalId && product.RecordStatus != Framework.Constants.RecordStatus.Deleted).AnyAsync(cancellationToken))
+            if (await _db.Products.Where(product => product.ExternalId == externalId && product.RecordStatus != RecordStatus.Deleted).AnyAsync(cancellationToken))
                 throw new Exception($"Product with external id {externalId} already exists.");
 
             var newProduct = Domain.Product.Create();
@@ -82,7 +83,7 @@ namespace eCommerceAutomation.API.Service.Product
                 PriceAdjustment = source.PriceAdjustment,
                 Priority = source.Priority,
                 RecordInsertDateTime = DateTime.Now,
-                RecordStatus = Framework.Constants.RecordStatus.Inserted,
+                RecordStatus = RecordStatus.Inserted,
                 Product = newProduct,
                 RecordUpdateDateTime = DateTime.Now,
                 SourceType = source.SourceType,
@@ -100,11 +101,11 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task DeleteAsync(long id, CancellationToken cancellationToken)
         {
-            var product = await _db.Products.Where(product => product.Id == id && product.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            var product = await _db.Products.Where(product => product.Id == id && product.RecordStatus != RecordStatus.Deleted).SingleOrDefaultAsync();
             if (product == null)
                 throw new Exception("Not found.");
 
-            product.RecordStatus = Framework.Constants.RecordStatus.Deleted;
+            product.RecordStatus = RecordStatus.Deleted;
             product.RecordUpdateDateTime = DateTime.Now;
 
             await _db.SaveChangesAsync(cancellationToken);
@@ -112,7 +113,7 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task PutSourcesAsync(long id, IEnumerable<SourceServiceInputModel> sources, CancellationToken cancellationToken)
         {
-            var product = await _db.Products.Include(product => product.Sources).Where(product => product.Id == id && product.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            var product = await _db.Products.Include(product => product.Sources).Where(product => product.Id == id && product.RecordStatus != RecordStatus.Deleted).SingleOrDefaultAsync();
             if (product == null)
                 throw new Exception("Not found.");
 
@@ -134,7 +135,7 @@ namespace eCommerceAutomation.API.Service.Product
             var now = DateTime.Now;
             foreach (var source in product.Sources)
             {
-                source.RecordStatus = Framework.Constants.RecordStatus.Deleted;
+                source.RecordStatus = RecordStatus.Deleted;
                 source.RecordUpdateDateTime = now;
             }
 
@@ -154,7 +155,7 @@ namespace eCommerceAutomation.API.Service.Product
                     currentSource.PriceAdjustment = source.PriceAdjustment;
                     currentSource.Priority = source.Priority;
                     currentSource.WholesalePriceAdjustment = source.WholesalePriceAdjustment;
-                    currentSource.RecordStatus = Framework.Constants.RecordStatus.Updated;
+                    currentSource.RecordStatus = RecordStatus.Updated;
                     currentSource.RecordUpdateDateTime = now;
                     currentSource.Key = source.Key;
                 }
@@ -177,7 +178,7 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task PatchStatusAsync(long id, bool isDisabled, CancellationToken cancellationToken)
         {
-            var product = await _db.Products.Where(product => product.Id == id && product.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            var product = await _db.Products.Where(product => product.Id == id && product.RecordStatus != RecordStatus.Deleted).SingleOrDefaultAsync();
             if (product == null)
                 throw new Exception("Not found.");
 
@@ -188,7 +189,7 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task PatchReviewNeededStatusAsync(long id, bool isReviewNeeded, CancellationToken cancellationToken)
         {
-            var product = await _db.Products.Where(product => product.Id == id && product.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            var product = await _db.Products.Where(product => product.Id == id && product.RecordStatus != RecordStatus.Deleted).SingleOrDefaultAsync();
             if (product == null)
                 throw new Exception("Not found.");
 
@@ -199,7 +200,7 @@ namespace eCommerceAutomation.API.Service.Product
 
         public async Task PatchProductAsync(long id, string name, int? originalMinimumQuantity, decimal? originalPrice, string originalWholesalePrices, int? minimumQuantity, decimal? price, string wholesalePrices, bool? isReviewNeeded, bool? isInitialized, CancellationToken cancellationToken)
         {
-            var product = await _db.Products.Where(product => product.Id == id && product.RecordStatus != Framework.Constants.RecordStatus.Deleted).SingleOrDefaultAsync();
+            var product = await _db.Products.Where(product => product.Id == id && product.RecordStatus != RecordStatus.Deleted).SingleOrDefaultAsync();
             if (product == null)
                 throw new Exception("Not found.");
 
