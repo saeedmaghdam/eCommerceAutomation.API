@@ -264,9 +264,9 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
 
             await _productService.PatchProductAsync(product.Id,
                 null,
-                null,
-                null,
-                null,
+                adjustedMetadata.MinimumQuantity,
+                newMetadata.Price,
+                JsonSerializer.Serialize(newMetadata.WholesalePrices),
                 adjustedMetadata.MinimumQuantity,
                 adjustedMetadata.Price,
                 JsonSerializer.Serialize(adjustedMetadata.WholesalePrices),
@@ -274,15 +274,85 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
                 true,
                 model.IsDisabled,
                 cancellationToken);
+
             await _sourceService.PatchAsync(source.Id,
                 null,
                 null,
                 null,
                 source.Metadata,
                 null,
-                source.PriceAdjustment,
-                source.WholesalePriceAdjustment,
+                model.PriceAdjustment,
+                model.WholesalePriceAdjustment,
                 cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPost("{id}/source/type/telegram/{sourceId}")]
+        public async Task<ActionResult> UpdateTelegram([FromRoute] long id, [FromRoute] long sourceId, [FromBody] PostUpdateTelegramSource model, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(model.PriceAdjustment))
+                return UnprocessableEntity("PriceAdjustment is required.");
+
+            var customPriceAdjustment = model.PriceAdjustment.Replace("+", "").Replace("-", "").Replace("%", "");
+            if (!decimal.TryParse(customPriceAdjustment, out var tempCustomPriceAdjustment))
+                return Json(UnprocessableEntity("PriceAdjustment is not well-formed."));
+
+            if (model.Price <= 0)
+                return Json(UnprocessableEntity("Price is invalid."));
+
+            var product = await _productService.GetByIdAsync(id, cancellationToken);
+
+            var source = product.Sources.Single(x => x.Id == sourceId);
+            if (source.SourceType != SourceType.Telegram)
+                return BadRequest("Source type is not telegram");
+
+            try
+            {
+                if (!product.IsDisabled && model.IsDisabled)
+                {
+                    var response = await _commonHelper.UnavailableProduct(product.ExternalId);
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                        return Json(UnprocessableEntity($"API ERROR, HTTP Status Code: {response.StatusCode.ToString()}({(int)response.StatusCode})"));
+                }
+                else if (!product.IsDisabled || (product.IsDisabled && !model.IsDisabled))
+                {
+                    var websiteUpdateModel = new WebsiteMetadataModel();
+                    websiteUpdateModel.Price = _commonHelper.CustomPriceAdjustment(model.Price * _commonHelper.FixedAdjustmentRatio, model.PriceAdjustment);
+                    websiteUpdateModel.MinimumQuantity = model.MinimumQuantity;
+
+                    var response = await _commonHelper.UpdateProductUsingWebsiteMetadataModel(product.ExternalId, websiteUpdateModel);
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                        return Json(UnprocessableEntity($"API ERROR, HTTP Status Code: {response.StatusCode.ToString()}({(int)response.StatusCode})"));
+                }
+
+                await _productService.PatchProductAsync(product.Id,
+                null,
+                model.MinimumQuantity,
+                model.Price,
+                null,
+                model.MinimumQuantity,
+                _commonHelper.CustomPriceAdjustment(model.Price * _commonHelper.FixedAdjustmentRatio, model.PriceAdjustment),
+                null,
+                false,
+                true,
+                model.IsDisabled,
+                cancellationToken);
+
+                await _sourceService.PatchAsync(source.Id,
+                    null,
+                    null,
+                    null,
+                    source.Metadata,
+                    null,
+                    model.PriceAdjustment,
+                    null,
+                    cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return UnprocessableEntity($"API ERROR: {ex.ToString()}.");
+            }
 
             return Ok();
         }

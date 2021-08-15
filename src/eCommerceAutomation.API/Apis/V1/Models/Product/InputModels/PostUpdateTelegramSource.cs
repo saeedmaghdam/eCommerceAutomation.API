@@ -14,6 +14,12 @@
             set;
         }
 
+        public int MinimumQuantity
+        {
+            get;
+            set;
+        }
+
         public bool IsDisabled
         {
             get;
