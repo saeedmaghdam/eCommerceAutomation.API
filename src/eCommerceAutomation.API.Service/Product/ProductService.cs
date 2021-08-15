@@ -207,7 +207,7 @@ namespace eCommerceAutomation.API.Service.Product
             await _db.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task PatchProductAsync(long id, string name, int? originalMinimumQuantity, decimal? originalPrice, string originalWholesalePrices, int? minimumQuantity, decimal? price, string wholesalePrices, bool? isReviewNeeded, bool? isInitialized, CancellationToken cancellationToken)
+        public async Task PatchProductAsync(long id, string name, int? originalMinimumQuantity, decimal? originalPrice, string originalWholesalePrices, int? minimumQuantity, decimal? price, string wholesalePrices, bool? isReviewNeeded, bool? isInitialized, bool? isDisabled, CancellationToken cancellationToken)
         {
             var product = await _db.Products.Where(product => product.Id == id && product.RecordStatus != RecordStatus.Deleted).SingleOrDefaultAsync();
             if (product == null)
@@ -239,6 +239,9 @@ namespace eCommerceAutomation.API.Service.Product
 
             if (isInitialized.HasValue)
                 product.IsInitialized = isInitialized.Value;
+
+            if (isDisabled.HasValue)
+                product.IsDisabled = isDisabled.Value;
 
             await _db.SaveChangesAsync(cancellationToken);
         }

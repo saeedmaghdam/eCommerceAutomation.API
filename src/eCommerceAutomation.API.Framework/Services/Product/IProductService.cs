@@ -20,6 +20,6 @@ namespace eCommerceAutomation.API.Framework.Services.Product
 
         Task PatchReviewNeededStatusAsync(long id, bool isReviewNeeded, CancellationToken cancellationToken);
 
-        Task PatchProductAsync(long id, string name, int? originalMinimumQuantity, decimal? originalPrice, string originalWholesalePrices, int? minimumQuantity, decimal? price, string wholesalePrices, bool? isReviewNeeded, bool? isInitialized, CancellationToken cancellationToken);
+        Task PatchProductAsync(long id, string name, int? originalMinimumQuantity, decimal? originalPrice, string originalWholesalePrices, int? minimumQuantity, decimal? price, string wholesalePrices, bool? isReviewNeeded, bool? isInitialized, bool? isDisabled, CancellationToken cancellationToken);
     }
 }

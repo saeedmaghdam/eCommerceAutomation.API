@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -22,11 +23,13 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
+        private readonly ISourceService _sourceService;
         private readonly CommonHelper _commonHelper;
 
-        public ProductController(IProductService productService, CommonHelper commonHelper)
+        public ProductController(IProductService productService, ISourceService sourceService, CommonHelper commonHelper)
         {
             _productService = productService;
+            _sourceService = sourceService;
             _commonHelper = commonHelper;
         }
 
@@ -138,7 +141,7 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult> PatchAsync([FromRoute] long id, [FromBody] PatchProductInputModel model, CancellationToken cancellationToken)
         {
-            await _productService.PatchProductAsync(id, model.Name, model.OriginalMinimumQuantity, model.OriginalPrice, model.OriginalWholesalePrices, model.MinimumQuantity, model.Price, model.WholesalePrices, model.IsReviewNeeded, model.IsInitialized, cancellationToken);
+            await _productService.PatchProductAsync(id, model.Name, model.OriginalMinimumQuantity, model.OriginalPrice, model.OriginalWholesalePrices, model.MinimumQuantity, model.Price, model.WholesalePrices, model.IsReviewNeeded, model.IsInitialized, null, cancellationToken);
 
             return Ok();
         }
@@ -200,6 +203,88 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
             result.Price = _commonHelper.CustomPriceAdjustment(model.Price * _commonHelper.FixedAdjustmentRatio, model.PriceAdjustment);
 
             return Ok(result);
+        }
+
+        [HttpPost("{id}/source/type/website/{sourceId}")]
+        public async Task<ActionResult> UpdateWebsiteSourceAsync([FromRoute] long id, [FromRoute] long sourceId, [FromBody] PostUpdateWebsiteSource model, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(model.PriceAdjustment))
+                return UnprocessableEntity("PriceAdjustment is required.");
+
+            var customPriceAdjustment = model.PriceAdjustment.Replace("+", "").Replace("-", "").Replace("%", "");
+            if (!decimal.TryParse(customPriceAdjustment, out var tempCustomPriceAdjustment))
+                return Json(UnprocessableEntity("PriceAdjustment is not well-formed."));
+
+            if (string.IsNullOrEmpty(model.WholesalePriceAdjustment))
+                return UnprocessableEntity("WholesalePriceAdjustment is required.");
+
+            var customRetailPriceAdjustment = model.WholesalePriceAdjustment.Replace("+", "").Replace("-", "").Replace("%", "");
+            if (!decimal.TryParse(customRetailPriceAdjustment, out var tempCustomRetailPriceAdjustment))
+                return Json(UnprocessableEntity("WholesalePriceAdjustment is not well-formed."));
+
+            var product = await _productService.GetByIdAsync(id, cancellationToken);
+
+            var source = product.Sources.Single(x => x.Id == sourceId);
+            if (source.SourceType != SourceType.Website)
+                return BadRequest("Source type is not website");
+
+            if (product.IsDisabled && model.IsDisabled)
+                return Json(UnprocessableEntity("Product already is disabled."));
+
+            var newMetadata = JsonSerializer.Deserialize<WebsiteMetadataModel>(source.Metadata);
+
+            var adjustedMetadata = _commonHelper.WebsitePriceAdjustment(newMetadata, source.PriceAdjustment, source.WholesalePriceAdjustment);
+
+            if (!product.IsDisabled && source.IsDisabled)
+            {
+                var response = await _commonHelper.UnavailableProduct(product.ExternalId);
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    return Json(UnprocessableEntity($"API ERROR, HTTP Status Code: {response.StatusCode.ToString()}({(int)response.StatusCode})"));
+            }
+            else if (!newMetadata.IsInStock)
+            {
+                var response = await _commonHelper.UnavailableProduct(product.ExternalId);
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    return Json(UnprocessableEntity($"API ERROR, HTTP Status Code: {response.StatusCode.ToString()}({(int)response.StatusCode})"));
+            }
+            else
+            {
+                if (!product.IsDisabled || product.IsDisabled && !source.IsDisabled)
+                {
+                    var websiteUpdateModel = new WebsiteMetadataModel();
+                    websiteUpdateModel.Price = adjustedMetadata.Price;
+                    websiteUpdateModel.MinimumQuantity = adjustedMetadata.MinimumQuantity;
+                    websiteUpdateModel.WholesalePrices = adjustedMetadata.WholesalePrices;
+
+                    var response = await _commonHelper.UpdateProductUsingWebsiteMetadataModel(product.ExternalId, websiteUpdateModel);
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                        return Json(UnprocessableEntity($"API ERROR, HTTP Status Code: {response.StatusCode.ToString()}({(int)response.StatusCode})"));
+                }
+            }
+
+            await _productService.PatchProductAsync(product.Id,
+                null,
+                null,
+                null,
+                null,
+                adjustedMetadata.MinimumQuantity,
+                adjustedMetadata.Price,
+                JsonSerializer.Serialize(adjustedMetadata.WholesalePrices),
+                false,
+                true,
+                model.IsDisabled,
+                cancellationToken);
+            await _sourceService.PatchAsync(source.Id,
+                null,
+                null,
+                null,
+                source.Metadata,
+                null,
+                source.PriceAdjustment,
+                source.WholesalePriceAdjustment,
+                cancellationToken);
+
+            return Ok();
         }
     }
 }
