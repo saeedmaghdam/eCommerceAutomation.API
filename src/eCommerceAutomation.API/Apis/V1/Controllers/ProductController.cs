@@ -40,45 +40,15 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
             if (!products.Any())
                 return NoContent();
 
-            return Ok(products.Select(product => new ProductViewModel()
-            {
-                Sources = product.Sources.Select(source => new SourceViewModel()
-                {
-                    ViewId = source.ViewId,
-                    RecordUpdateDateTime = source.RecordUpdateDateTime,
-                    RecordStatus = source.RecordStatus,
-                    RecordInsertDateTime = source.RecordInsertDateTime,
-                    Address = source.Address,
-                    Id = source.Id,
-                    IsDisabled = source.IsDisabled,
-                    Metadata = source.Metadata,
-                    OldMetadata = source.OldMetadata,
-                    PriceAdjustment = source.PriceAdjustment,
-                    Priority = source.Priority,
-                    SourceType = source.SourceType,
-                    WholesalePriceAdjustment = source.WholesalePriceAdjustment,
-                    Key = source.Key,
-                    IsActive = source.IsActive
+            return Ok(ToViewModel(products));
+        }
 
-                }),
-                ExternalId = product.ExternalId,
-                Id = product.Id,
-                IsDisabled = product.IsDisabled,
-                IsInitialized = product.IsInitialized,
-                IsReviewNeeded = product.IsReviewNeeded,
-                MinimumQuantity = product.MinimumQuantity,
-                Name = product.Name,
-                OriginalMinimumQuantity = product.OriginalMinimumQuantity,
-                OriginalPrice = product.OriginalPrice,
-                OriginalWholesalePrices = product.OriginalWholesalePrices,
-                Price = product.Price,
-                RecordInsertDateTime = product.RecordInsertDateTime,
-                RecordStatus = product.RecordStatus,
-                RecordUpdateDateTime = product.RecordUpdateDateTime,
-                Url = product.Url,
-                ViewId = product.ViewId,
-                WholesalePrices = product.WholesalePrices
-            }));
+        [HttpGet("{id}")]
+        public async Task<ActionResult<IEnumerable<ProductViewModel>>> GetByIdAsync(long id, CancellationToken cancellationToken)
+        {
+            var product = await _productService.GetByIdAsync(id, cancellationToken);
+            
+            return Ok(ToViewModel(new[] { product }).Single());
         }
 
         [HttpPost("createProductWithSources")]
@@ -355,6 +325,49 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
             }
 
             return Ok();
+        }
+
+        private IEnumerable<ProductViewModel> ToViewModel(IEnumerable<IProduct> products)
+        {
+            return products.Select(product => new ProductViewModel()
+            {
+                Sources = product.Sources.Select(source => new SourceViewModel()
+                {
+                    ViewId = source.ViewId,
+                    RecordUpdateDateTime = source.RecordUpdateDateTime,
+                    RecordStatus = source.RecordStatus,
+                    RecordInsertDateTime = source.RecordInsertDateTime,
+                    Address = source.Address,
+                    Id = source.Id,
+                    IsDisabled = source.IsDisabled,
+                    Metadata = source.Metadata,
+                    OldMetadata = source.OldMetadata,
+                    PriceAdjustment = source.PriceAdjustment,
+                    Priority = source.Priority,
+                    SourceType = source.SourceType,
+                    WholesalePriceAdjustment = source.WholesalePriceAdjustment,
+                    Key = source.Key,
+                    IsActive = source.IsActive
+
+                }),
+                ExternalId = product.ExternalId,
+                Id = product.Id,
+                IsDisabled = product.IsDisabled,
+                IsInitialized = product.IsInitialized,
+                IsReviewNeeded = product.IsReviewNeeded,
+                MinimumQuantity = product.MinimumQuantity,
+                Name = product.Name,
+                OriginalMinimumQuantity = product.OriginalMinimumQuantity,
+                OriginalPrice = product.OriginalPrice,
+                OriginalWholesalePrices = product.OriginalWholesalePrices,
+                Price = product.Price,
+                RecordInsertDateTime = product.RecordInsertDateTime,
+                RecordStatus = product.RecordStatus,
+                RecordUpdateDateTime = product.RecordUpdateDateTime,
+                Url = product.Url,
+                ViewId = product.ViewId,
+                WholesalePrices = product.WholesalePrices
+            });
         }
     }
 }
