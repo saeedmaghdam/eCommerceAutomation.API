@@ -92,7 +92,7 @@ namespace eCommerceAutomation.API.Apis.V1.Controllers
             return Ok();
         }
 
-        [HttpPatch("{id}/status")]
+        [HttpPatch("{id}/disable")]
         public async Task<ActionResult> PatchStatusAsync([FromRoute] long id, [FromBody] bool isDisabled, CancellationToken cancellationToken)
         {
             await _productService.PatchStatusAsync(id, isDisabled, cancellationToken);
